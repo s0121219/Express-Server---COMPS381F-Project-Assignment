@@ -1,41 +1,53 @@
 const express = require('express');
 const app = express();
 
-const greetingMsg = (name = null, includeTime = false) => {
-  let today = new Date();
-  let msg = (name != null) ? 'Hello ' + name + '! ' : 'Hello there!';
-  if (includeTime) {
-    msg += `  It is now ${today.toTimeString()}`;
-    msg = `<html><head><title>sayHello</title></head><body><H1>${msg}</H1></body><html>`;
-  }
-  return(msg);
+
+var msg='';
+var user='';
+const accounts = [
+	{name: 'demo', password: ''},
+	{name: 'student', password: ''}
+];
+
+const authenticateUser = (id = null, password = null) => {
+if(id=='' && password==''){
+	msg='Incorrect userid or password!';
+	return true;
+}
+for(let x of accounts){
+	if(x.name==id && x.password==password){
+	msg='';
+	user=id;
+	return false;
+	}
+}
+return true;
 }
 
-app.get('/', (req, res) => {
-  res.redirect('/greetings');
+/*let today = new Date();
+    let msg = (name != null) ? 'Hello ' + name + '! ' : 'Hello there!';
+    if (includeTime) {
+      msg += `  It is now ${today.toTimeString()}`;
+    }
+    return(msg);*/
+
+app.set('view engine', 'ejs');
+
+app.get("/", (req,res) => {
+	res.status(200).render("login",{msg:msg});	
 });
 
-app.get('/greetings', (req, res) => {
-  res.set('Content-Type', 'text/html');
-  res.status(200).end(greetingMsg(req.query.name, false));
+app.get("/processlogin", (req,res) => {
+	if(authenticateUser(req.query.id,req.query.password)){
+	res.redirect('/');
+	}else
+	res.redirect('/read');
 });
 
-app.get('/greetings/sayHello', (req, res) => {
-  res.redirect('/greetings');
+app.get("/read", (req,res) => {
+	res.status(200).render("read",{user:user});	
 });
+app.listen(process.env.PORT || 8099);
 
-app.get('/greetings/sayHelloWithTime', (req, res) => {
-  res.set('Content-Type', 'text/html');
-  res.status(200).end(greetingMsg(req.query.name, true));
-});
 
-app.get('/*', (req, res) => {  // default route for anything else
-  res.set('Content-Type', 'text/plain');
-  res.status(404).end("404 Not Found");
-})
 
-const server = app.listen(process.env.PORT || 8099, () => {
-  const port = server.address().port;
-  console.log(`Server listening at port ${port}`);
-});
-GGYY GGGGGYYYY
