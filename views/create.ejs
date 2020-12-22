@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<title>Create New Restaurant</title>
+
+<body>
+<h1>Create New Restaurant</h1>
+ 
+
+    <form action="/createR" method="post">
+        <p>
+            Restaurant ID:<input name="restaurant_id" type="text">
+            </p>
+        <p>
+            <p>
+                Name*:<input name="name" type="text" required>
+                </p>
+            <p>
+                Borough:<input name="borough" type="text">
+                </p>
+            <p>
+                <p>
+                    Cuisine:<input name="cuisine" type="text">
+                    </p>
+                <p>
+                    Street:<input name="street" type="text">
+                    </p>
+                <p>
+                    <p>
+                        Building:<input name="building" type="text">
+                        </p>
+                    <p>
+                        <p>
+                            Zipcode:<input name="zipcode" type="text">
+                            </p>
+                        <p>
+                            <p>
+                                GPS Coordinates (lon.):<input name="lon" type="text">
+                                </p>
+                            <p>
+                                GPS Coordinates (lat.):<input name="lat" type="text">
+                                </p>
+                            <p>
+                                Photo:<input name="sampleFile" type="file">
+                                </p>
+                            <p>
+                                <button> Create </button>
+				 <button onclick="goBack()">Go Back</button>
+
+			 </p>
+    </form>
+<script>
+            function goBack() {window.history.back();}
+        </script>
+</body>
+
+</html>
