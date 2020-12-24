@@ -1,0 +1,34 @@
+<html>
+	<body>
+	<H2>Restaurant Details</H2><hr>
+
+ 	<% if (restaurant.photo) { %>
+            <img src="data:image/jpg;base64, <%= restaurant.photo %>"><br>
+        <% } %>
+
+	<p>Restaurant ID: <%= restaurant.restaurant_id %></p>
+	<p>Restaurant name: <%= restaurant.name %></p>
+	<p>Borough: <%= restaurant.borough %></p>
+	<p>Cuisine: <%= restaurant.cuisine %></p>
+	<p>Street: <%= restaurant.address.street %></p>
+	<p>Building: <%= restaurant.address.building %></p>
+	<p>Zipcode: <%= restaurant.address.zipcode %></p>
+	<p>Coordinate: [<%= restaurant.address.coord[0] %>,<%= restaurant.address.coord[1] %>]</p>
+	
+Grades: 
+<% for (var g of restaurant.grades) { %>
+            <li><%= g.score %>(<%= g.user %>)</li>
+            <% } %>
+
+
+	<p>Owner: <%= restaurant.owner %></p>
+	
+	<% if (restaurant.owner == user) { %>
+            <a style="margin:5px;" href="/edit?_id=<%= restaurant._id %>">Edit</a>
+        <% } %>
+
+	<a style="margin:5px;" href="/rate?_id=<%= restaurant._id %>">Rate</a>
+
+	<a style="margin:5px;" href="/">Back<a>
+</body>
+</html>

@@ -1,13 +1,21 @@
 <HTML>
     <BODY>
-        <H1>
+	<H1>
         Logged in
-    </H1>
-<p>
-You are currently logged in as <%= user %>. <a href='/logout'>Logout</a>
-</p>
-<a href="/createRestaurant">
+	</H1>
+	<p>
+	You are currently logged in as <%= user %>. <a href='/logout'>Logout</a>
+	</p>
+	<a href="/createRestaurant">
         <button>Create New Restaurant</button>
-      </a>
+	</a>
+
+	<br><br>Showing <%= noOfRestaurant %> restaurant(s).
+
+	<ul>
+            <% for (var r of restaurants) { %>
+            <li><a href="/display?_id=<%= r._id %>"><%= r.name %></a></li>
+            <% } %>
+        </ul>
     </BODY>
 </HTML>

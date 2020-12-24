@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<title>Edit Restaurant</title>
+
+<body>
+<h1>Edit Restaurant</h1>
+ 
+
+    <form action="/edit?_id=<%= restaurant._id %>" method="post" enctype="multipart/form-data">
+        <p>
+            Restaurant ID:<input name="restaurant_id" type="text" value="<%= restaurant.restaurant_id %>">
+            </p>
+        <p>
+            <p>
+                Name*:<input name="name" type="text" required value="<%= restaurant.name %>">
+                </p>
+            <p>
+                Borough:<input name="borough" type="text" value="<%= restaurant.borough %>">
+                </p>
+            <p>
+                <p>
+                    Cuisine:<input name="cuisine" type="text" value="<%= restaurant.cuisine %>">
+                    </p>
+                <p>
+                    Street:<input name="street" type="text" value="<%= restaurant.address.street %>">
+                    </p>
+                <p>
+                    <p>
+                        Building:<input name="building" type="text" value="<%= restaurant.address.building %>">
+                        </p>
+                    <p>
+                        <p>
+                            Zipcode:<input name="zipcode" type="text" value="<%= restaurant.address.zipcode %>">
+                            </p>
+                        <p>
+                            <p>
+                                GPS Coordinates (lon.):<input name="lon" type="text" value="<%= restaurant.address.coord[0] %>">
+                                </p>
+                            <p>
+                                GPS Coordinates (lat.):<input name="lat" type="text" value="<%= restaurant.address.coord[1] %>">
+                                </p>
+                            <p>
+                                Photo:<input name="photo" type="file">
+                                </p>
+                            <p>
+                                <button> Edit </button>
+				 <button onclick="goBack()">Go Back</button>
+
+			 </p>
+    </form>
+<script>
+            function goBack() {window.history.back();}
+        </script>
+</body>
+
+</html>
