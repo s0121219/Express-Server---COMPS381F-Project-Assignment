@@ -1,0 +1,20 @@
+<HTML>
+    <BODY>
+	<H1>
+        Search result
+	</H1>
+		<p>Name: <%= name %></p>
+		<p>Borough: <%= borough %></p>
+		<p>Cuisine: <%= cuisine %></p>
+
+	<br><br> <%= restaurants.length %> restaurant(s) matches.
+
+	<ul>
+            <% for (var r of restaurants) { %>
+            <li><a href="/display?_id=<%= r._id %>"><%= r.name %></a></li>
+            <% } %>
+        </ul>
+
+	<a href="/read"><button>Home</button></a>
+    </BODY>
+</HTML>

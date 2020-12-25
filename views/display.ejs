@@ -17,15 +17,20 @@
 	
 Grades: 
 <% for (var g of restaurant.grades) { %>
-            <li><%= g.score %>(<%= g.user %>)</li>
+            <li><%= g.score %> (<%= g.user %>)</li>
             <% } %>
 
 
 	<p>Owner: <%= restaurant.owner %></p>
 	
 	<% if (restaurant.owner == user) { %>
-            <a style="margin:5px;" href="/edit?_id=<%= restaurant._id %>">Edit</a>
+	<a style="margin:5px;" href="/edit?_id=<%= restaurant._id %>">Edit</a>
+	<a style="margin:5px;" href="/delete?_id=<%= restaurant._id %>">Delete</a>
         <% } %>
+
+	<% if (restaurant.address.coord[0] > 0 && restaurant.address.coord[1] > 0) { %>
+	<a style="margin:5px;" href="/map?lat=<%= restaurant.address.coord[0]%>&lon=<%= restaurant.address.coord[1]%>">Map</a>
+	<% } %>
 
 	<a style="margin:5px;" href="/rate?_id=<%= restaurant._id %>">Rate</a>
 
