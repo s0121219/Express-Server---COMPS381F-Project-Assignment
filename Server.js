@@ -32,8 +32,68 @@ app.use(session({
 }));
 
 app.set('view engine', 'ejs');
+/*-------------------------RESTful-----------------------------------------------*/
+app.get('/api/restaurant/name/:name', (req,res) => {
+    if (req.params.name) {
+        let criteria = {};
+        criteria['name'] = req.params.name;
+        const client = new MongoClient(mongourl);
+        client.connect((err) => {
+            assert.equal(null, err);
+            const db = client.db(dbName);
 
+            findDocument(db, criteria, (docs) => {
+                client.close();
+                console.log("Closed DB connection");
+                res.status(200).json(docs);
+            });
+        });
+    } else {
+        res.status(500).json({"error": "missing name"});
+    }
+})
 
+app.get('/api/restaurant/borough/:borough', (req,res) => {
+    if (req.params.borough) {
+        let criteria = {};
+        criteria['borough'] = req.params.borough;
+        const client = new MongoClient(mongourl);
+        client.connect((err) => {
+            assert.equal(null, err);
+            const db = client.db(dbName);
+
+            findDocument(db, criteria, (docs) => {
+                client.close();
+                console.log("Closed DB connection");
+                res.status(200).json(docs);
+            });
+        });
+    } else {
+        res.status(500).json({"error": "missing borough"});
+    }
+})
+
+app.get('/api/restaurant/cuisine/:cuisine', (req,res) => {
+    if (req.params.cuisine) {
+        let criteria = {};
+        criteria['cuisine'] = req.params.cuisine;
+        const client = new MongoClient(mongourl);
+        client.connect((err) => {
+            assert.equal(null, err);
+            const db = client.db(dbName);
+
+            findDocument(db, criteria, (docs) => {
+                client.close();
+                console.log("Closed DB connection");
+                res.status(200).json(docs);
+            });
+        });
+    } else {
+        res.status(500).json({"error": "missing cuisine"});
+    }
+})
+
+/*------------------Routing------------------------------------------------------*/
 app.get("/", (req,res) => {
 	console.log(req.session);
 	if (!req.session.authenticated) {    // user not logged in
@@ -189,12 +249,32 @@ app.post('/edit', (req,res) => {
 });
 
 app.get("/rate", (req,res) => {
-
-	res.status(200).render("rate",{id:req.query._id});	
+var isRated = false;
+const client = new MongoClient(mongourl, { useNewUrlParser: true });
+	client.connect((err) => {
+        	assert.equal(null, err);
+        	const db = client.db(dbName);
+			let DOCID = {};
+			DOCID['_id'] = ObjectID(req.query._id)
+			findDocument(db,DOCID, (docs) => {
+				client.close();
+				docs[0].grades.forEach((grade)=>{
+					if(grade.user == req.session.id){
+						isRated = true;
+					}
+				});
+				if(isRated){
+					res.status(200).render("rated");
+				}else{
+					res.status(200).render("rate",{id:req.query._id});
+				}	
+			});
+	});
 });
 
 
 app.post('/rate', (req,res) => {
+	
 	const form = new formidable.IncomingForm(); 
 	form.parse(req, (err, fields) => {
 		var DOCID = {};
@@ -202,7 +282,6 @@ app.post('/rate', (req,res) => {
 		var newRating = {};
 		newRating['user'] = req.session.id;
 		newRating['score'] = fields.score;
-console.log(fields.score);
 
 
 			rateRestaurant(DOCID, newRating, () => {
@@ -212,11 +291,77 @@ console.log(fields.score);
 });
 
 
+app.get("/rated", (req,res) => {
+
+	res.status(200).render("rated");	
+});
+
+app.get("/delete", (req,res) => {
+	var DOCID = {};
+	DOCID['_id'] = ObjectID(req.query._id);
+	const client = new MongoClient(mongourl);
+    client.connect((err) => {
+        assert.equal(null, err);
+        console.log("Connected successfully to server");
+        const db = client.db(dbName);
+    
+        deleteDocument(db, DOCID, (results) => {
+            client.close();
+            res.status(200).render("del");	
+        });
+    });
+});
+
+app.get("/map", (req,res) => {
+
+res.render("map", {
+		lat:req.query.lat,
+		lon:req.query.lon,
+		zoom:req.query.zoom ? req.query.zoom : 15
+	});
+	res.end();
+
+});
+
+app.get("/search", (req,res) => {
+	res.status(200).render("search");	
+});
+
+app.post("/search", (req,res) => {
+	const form = new formidable.IncomingForm(); 
+	form.parse(req, (err, fields) => {
+		var criteria = {};
+		if(fields.name)
+			criteria['name'] = fields.name;
+		if(fields.borough)
+			criteria['borough'] = fields.borough;
+		if(fields.cuisine)
+			criteria['cuisine'] = fields.cuisine;
+
+//If no search keyword inputed, show 0 resturant instead of  all resturant  
+	if(!fields.name&&!fields.borough&&!fields.cuisine){
+		criteria['name'] = '';
+	}
+
+		const client = new MongoClient(mongourl, { useNewUrlParser: true });
+        client.connect((err) => {
+            assert.equal(null, err);
+            const db = client.db(dbName);
+
+            findDocument(db, criteria, (docs) => {
+                client.close();
+				res.status(200).render("searchResult",{restaurants:docs,name:fields.name,borough:fields.borough,cuisine:fields.cuisine});	
+            });
+        });
+	});
+});
+
+
 app.get('/logout', (req,res) => {
 	req.session = null;   // clear cookie-session
 	res.redirect('/');
 });
-
+/*------------------------------------------------------------------------*/
 const insertDocument = (doc, callback) => {
 	const client = new MongoClient(mongourl, { useNewUrlParser: true });
 	client.connect((err) => {
@@ -267,6 +412,13 @@ const rateRestaurant = (criteria, newRating, callback) => {
             callback();
 		});
     });
+}
+
+const deleteDocument = (db, criteria, callback) => {
+    db.collection('restaurant').deleteOne(criteria, (err,results) => {
+        assert.equal(err,null);
+        callback(results);
+    })
 }
 
 app.listen(process.env.PORT || 8099);
