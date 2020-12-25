@@ -7,7 +7,7 @@ const ObjectID = require('mongodb').ObjectID;
 const assert = require('assert');
 const fs = require('fs');
 const formidable = require('formidable');
-const mongourl = 'mongodb+srv://chu:taisaichu@cluster0.0gccl.mongodb.net/NULL?retryWrites=true&w=majority';
+const mongourl = '';
 const dbName = 'NULL';
 
 var msg='';
